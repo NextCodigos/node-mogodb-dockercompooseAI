@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: nodejs-app
+    ports:
+      - "5000:3000"
+    depends_on:
+      - mongo
+    restart: always
+    environment:
+      - MONGO_URI=mongodb://mongo/mydatabase
+
+  mongo:
+    container_name: mongodb
+    image: mongo:6.0 # Versión actualizada de MongoDB
+    ports:
+      - "27018:27017"
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

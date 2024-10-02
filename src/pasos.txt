@@ -1,0 +1,180 @@
+Aquí tienes un archivo README.md que incluye todos los pasos necesarios para configurar tu aplicación Node.js con MongoDB utilizando Docker y Docker Compose. Puedes copiarlo y guardarlo en tu proyecto.
+
+
+# Proyecto Node.js y MongoDB con Docker
+
+Este proyecto configura una aplicación Node.js con una base de datos MongoDB utilizando Docker y Docker Compose.
+
+## Estructura de Directorios
+
+project-root/ ├── src/ │ └── index.js ├── package.json ├── Dockerfile └── docker-compose.yml
+
+///////////////////////////////////////////////////
+
+## Pasos para Configurar y Ejecutar el Proyecto
+
+### 1. Crear el archivo `package.json`
+
+Ejecuta el siguiente comando para inicializar un nuevo proyecto Node.js:
+
+
+npm init -y
+2. Instalar Dependencias
+Instala express y mongoose:
+npm install express mongoose
+
+
+ARCHIVO
+package.json:
+{
+  "name": "mogodb-dockercompooseai",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.21.0",
+    "mongoose": "^8.7.0"
+  }
+}
+
+///////////////////////////////////////////////////
+
+3. Crear el archivo Dockerfile
+
+Crea un archivo llamado Dockerfile en la raíz de tu proyecto y añade lo siguiente:
+
+
+# Usar la imagen oficial de Node.js como base
+FROM node:18
+
+# Establecer el directorio de trabajo
+WORKDIR /usr/src/app
+
+# Copiar package.json y package-lock.json
+COPY package*.json ./
+
+# Instalar dependencias
+RUN npm install
+
+# Copiar el resto de la aplicación
+COPY . .
+
+# Exponer el puerto 3000
+EXPOSE 3000
+
+# Comando para ejecutar la aplicación
+CMD ["npm", "start"]
+
+///////////////////////////////////////////////////
+
+4. Crear el archivo docker-compose.yml
+Crea un archivo llamado docker-compose.yml en la raíz de tu proyecto y añade lo siguiente:
+
+version: "3.8"
+
+services:
+  web:
+    container_name: nodejs-app
+    build: .
+    ports:
+      - "5000:3000"
+    depends_on:
+      - mongo
+  mongo:
+    container_name: mongodb
+    image: mongo:6.0
+    ports:
+      - "27018:27017"
+
+///////////////////////////////////////////////////
+
+5. Crear el archivo src/index.js
+Crea un archivo llamado index.js dentro de la carpeta src y añade el siguiente código de ejemplo:
+
+
+const express = require('express');
+const mongoose = require('mongoose');
+
+const app = express();
+const PORT = 3000;
+
+// Conectar a la base de datos
+mongoose.connect('mongodb://mongo:27017/mydatabase')
+  .then(() => console.log('DB is connected'))
+  .catch(err => console.error(err));
+
+app.get('/', (req, res) => {
+  res.send('¡Hola, mundo!');
+});
+
+// Iniciar el servidor
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
+
+///////////////////////////////////////////////////
+
+database.js:
+const mongoose = require("mongoose");
+
+mongoose
+  .connect("mongodb://mongo/mydatabase", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("DB is connected"))
+  .catch((err) => console.error(err));
+
+module.exports = mongoose;
+
+
+///////////////////////////////////////////////////
+
+.dockerignore
+node_modules
+npm-debug.log
+
+///////////////////////////////////////////////////
+
+6. Construir y Ejecutar los Contenedores
+Ejecuta el siguiente comando para construir y ejecutar los contenedores:
+
+docker-compose up --build
+
+Detener dockercooomse:
+docker-compose  down
+
+///////////////////////////////////////////////////
+
+7. Verificar la Aplicación
+Abre tu navegador y accede a http://localhost:5000 para verificar que tu aplicación esté funcionando. Deberías ver el mensaje "¡Hola, mundo!".
+
+///////////////////////////////////////////////////
+
+8. Revisar los Logs
+Si necesitas revisar los logs de la aplicación, puedes usar el siguiente comando:
+
+
+docker-compose logs web
+
+///////////////////////////////////////////////////
+
+9. Detener y Eliminar los Contenedores
+Para detener y eliminar los contenedores, ejecuta:
+
+
+docker-compose down
+
+///////////////////////////////////////////////////
+
+Notas Adicionales
+Asegúrate de que Docker y Docker Compose estén instalados en tu sistema.
+Puedes modificar el puerto de tu aplicación y el de MongoDB en el archivo docker-compose.yml si es necesario.
+Si necesitas agregar más dependencias, simplemente actualiza tu package.json y reconstruye los contenedores.
